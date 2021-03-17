@@ -1,40 +1,50 @@
 package study;
 
+import java.util.Arrays;
+
 public class Variance {
     public static void main(String[] args) {
 
-        if (args.length == 0) {
-            System.out.println("데이터가 입력되지 않았습니다.");
-            return;
-        } else if (args.length == 1) {
-            System.out.println("2개 이상의 데이터를 입력하세요.");
-            return;
+        String output;
+
+        switch (args.length) {
+            case 0 :
+                output = "데이터가 입력되지 않았습니다.";
+                break;
+            case 1 :
+                output = "2개 이상의 데이터를 입력하세요.";
+                break;
+            default:
+                output = getVarianceOutput(args);
+                break;
         }
 
-        double[] s = new double[args.length];
+        System.out.println(output);
+    }
 
-        int length = s.length;
+    private static String getVarianceOutput(String[] args) {
+        double[] source = parseDoubles(args);
+        double mean = calculateMean(source);
+        double sumOfSquares = calculateSumOfSquares(source, mean);
+        double variance = sumOfSquares / (args.length - 1);
+        return "분산 : " + variance;
+    }
 
-        for (int i = 0; i < length; i++) {
-            s[i] = Double.parseDouble(args[i]);
-        }
+    private static double calculateSumOfSquares(double[] source, double mean) {
+        return Arrays.stream(source)
+                .map(x -> x - mean)
+                .map(x -> x * x)
+                .sum()
+                ;
+    }
 
-        double sum = 0.0;
+    private static double calculateMean(double[] source) {
+        return Arrays.stream(source).average().orElse(0);
+    }
 
-        for (double v : s) {
-            sum += v;
-        }
-
-        double mean = sum / length;
-
-        double sumOfSquares = 0.0;
-
-        for (double v : s) {
-            sumOfSquares += (v - mean) * (v - mean);
-        }
-
-        double variance = sumOfSquares / (length - 1);
-
-        System.out.println("분산 : " + variance);
+    private static double[] parseDoubles(String[] args) {
+        return Arrays.stream(args)
+                .mapToDouble(Double::parseDouble)
+                .toArray();
     }
 }
